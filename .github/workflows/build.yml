@@ -1,0 +1,20 @@
+
+name: builder
+
+on: [push]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v1
+    - name: install-dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install git bc bison flex libssl-dev make libc6-dev libncurses5-dev
+        git clone --depth=1 https://github.com/raspberrypi/tools ~/tools
+        export PATH=$PATH:~/tools/arm-bcm2708/arm-linux-gnueabihf/bin
+    - name: build
+      run: make -j$(nproc) ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- bcmrpi_defconfig
